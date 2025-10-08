@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>发布表白 - 爱心表白墙</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #e91e63;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 1rem;
+            display: block;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+
+        button {
+            margin-top: 1.5rem;
+            width: 100%;
+            padding: 0.75rem;
+            background: #e91e63;
+            color: white;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #d81b60;
+        }
+
+        .anonymous {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>💗 发布表白 💗</h1>
+    <form id="form">
+        <label>你的名字：</label>
+        <input type="text" id="fromWho" required />
+
+        <label>TA的名字：</label>
+        <input type="text" id="toWho" required />
+
+        <label>想说的话：</label>
+        <textarea id="content" rows="5" required></textarea>
+
+        <div class="anonymous">
+            <label><input type="checkbox" id="isAnonymous" /> 匿名发布</label>
+        </div>
+
+        <button type="submit">发布表白</button>
+    </form>
+</div>
+
+<script>
+    const API = 'http://localhost:8080/api/confessions';
+
+    document.getElementById('form').addEventListener('submit', async e => {
+        e.preventDefault();
+        const payload = {
+            fromWho: document.getElementById('fromWho').value.trim(),
+            toWho: document.getElementById('toWho').value.trim(),
+            content: document.getElementById('content').value.trim(),
+            isAnonymous: document.getElementById('isAnonymous').checked
+        };
+
+        try {
+            const res = await fetch(API, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (result.code === 200) {
+                alert('发布成功！');
+                location.href = 'wall.html';
+            } else {
+                alert('发布失败：' + result.message);
+            }
+        } catch (err) {
+            alert('网络错误：' + err);
+        }
+    });
+</script>
+</body>
+</html>
